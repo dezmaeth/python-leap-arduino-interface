@@ -1,4 +1,8 @@
-import Leap, sys
+import Leap, sys,serial
+
+port = "/dev/ttyUSB0"
+baud = 9600
+run = True
 
 class Listener(Leap.Listener):
 
@@ -15,21 +19,23 @@ class Listener(Leap.Listener):
         print "Cerrado"
 
     def on_frame(self, controller):
-        print "cuadro"
+        print "cuadro\n"
         frame = controller.frame()
-        print "Frame id: %d, timestamp: %d, manos: %d, dedos: %d, herramientas: %d" % (
-        frame.id, frame.timestamp, len(frame.hands), len(frame.fingers), len(frame.tools))
+       # print "Frame id: %d, timestamp: %d, manos: %d, dedos: %d, herramientas: %d" % (
+       # frame.id, frame.timestamp, len(frame.hands), len(frame.fingers), len(frame.tools))
 
 
 def main():
+    ser = serial.Serial(port,baud)
+    ser.setRTS(0)
 
     listener = Listener()
     controller = Leap.Controller()
-
     controller.add_listener(listener)
+    while run:
+        ser.write('5')
+        print '5'
 
-    print "Presiona enter para cerrar..."
-    sys.stdin.readline()
     controller.remove_listener(listener)
     
 if __name__ == "__main__":
